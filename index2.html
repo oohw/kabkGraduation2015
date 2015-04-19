@@ -23,6 +23,10 @@
 			.name:hover{
 				text-decoration: underline;
 			}
+			#content {
+				 background:  url('img/content.png') no-repeat;
+				 background-size: 100%;
+			}
 		</style>
 	</head>
 	<body>
@@ -44,7 +48,7 @@
 
 			var currentIntersected;
 
-			var standardRotationSpeed = 0.5;
+			var standardRotationSpeed = 0.05;
 			var rotationSpeed = standardRotationSpeed;
 
 			var names;
@@ -65,8 +69,19 @@
 				info.style.top = '10px';
 				info.style.width = '100%';
 				info.style.textAlign = 'center';
-				info.innerHTML = '<a href="http://oohw.org" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
+				info.innerHTML = '<a href="http://oohw.net" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
 				container.appendChild( info );
+
+
+				var content = document.createElement( 'div' );
+				content.style.position = 'absolute';
+				content.style.top = '15%';
+				content.style.left = '15%';
+				content.style.height = '70%';
+				content.style.width = '70%';
+				content.setAttribute("id", "content");
+
+				document.body.appendChild( content );
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
 
@@ -155,14 +170,14 @@
 					origins.push( object.position );
 
 
-					var name = document.createElement( 'div' );
-					name.style.position = 'absolute';
-					name.style.top = '10px';
-					name.style.width = '200px';
-					name.style.textAlign = 'center';
+					// var name = document.createElement( 'div' );
+					// name.style.position = 'absolute';
+					// name.style.top = '10px';
+					// name.style.width = '200px';
+					// name.style.textAlign = 'center';
 
-					name.innerHTML = '<a class="name" href="#">' + mrRandom[i] + '</a>';
-					names.appendChild( name );
+					// name.innerHTML = '<a class="name" href="#">' + mrRandom[i] + '</a>';
+					// names.appendChild( name );
 
 					// if(i < 10){
 					// 	for(var v = 0; v < object.geometry.vertices.length; v++){
@@ -216,16 +231,16 @@
 				window.addEventListener( 'resize', onWindowResize, false );
 
 
-				$('.name').mouseover(function(event) {
-					/* Act on the event */
-					rotationSpeed = 0.05;
-					console.log('yeah');
-				});
-				$('.name').mouseout(function(event) {
-					/* Act on the event */
-					rotationSpeed = standardRotationSpeed;
-					console.log('yeah');
-				});
+				// $('.name').mouseover(function(event) {
+				// 	/* Act on the event */
+				// 	rotationSpeed = 0.05;
+				// 	console.log('yeah');
+				// });
+				// $('.name').mouseout(function(event) {
+				// 	/* Act on the event */
+				// 	rotationSpeed = standardRotationSpeed;
+				// 	console.log('yeah');
+				// });
 			}
 
 			function onWindowResize() {
@@ -317,14 +332,14 @@
 					}
 				}	
 
-				for ( var i = 0; i < smeshes.children.length; i++){
-					var proj = toScreenPosition(smeshes.children[i], camera);
-					var divElem = names.children[i];
+				// for ( var i = 0; i < smeshes.children.length; i++){
+				// 	var proj = toScreenPosition(smeshes.children[i], camera);
+				// 	var divElem = names.children[i];
 
-					divElem.style.left = proj.x-100 + 'px';
-					divElem.style.top = proj.y-10 + 'px';
+				// 	divElem.style.left = proj.x-100 + 'px';
+				// 	divElem.style.top = proj.y-10 + 'px';
 
-				}
+				// }
 
 				renderer.render( scene, camera );
 				// rotationSpeed = standardRotationSpeed;\
