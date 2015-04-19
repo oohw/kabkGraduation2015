@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - interactive lines</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #00a;
+				margin: 0px;
+				overflow: hidden;
+			}
+			div a {
+				color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+
+		<script src="js/three.js"></script>
+
+		<script src="js/stats.min.js"></script>
+
+		<script>
+
+			var container, stats;
+			var camera, scene, raycaster, renderer, parentTransform, sphereInter;
+			var origins = [];
+
+			var mouse = new THREE.Vector2();
+			var radius = 100, theta = 0;
+
+			var currentIntersected;
+
+			var rotationSpeed = 0.5;
+
+			init();
+			animate();
+
+			function init() {
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				var info = document.createElement( 'div' );
+				info.style.position = 'absolute';
+				info.style.top = '10px';
+				info.style.width = '100%';
+				info.style.textAlign = 'center';
+				info.innerHTML = '<a href="http://oohw.org" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
+				container.appendChild( info );
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+
+				scene = new THREE.Scene();
+
+				var geometry = new THREE.SphereGeometry( 1 );
+				var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+				sphereInter = new THREE.Mesh( geometry, material );
+				sphereInter.visible = false;
+				scene.add( sphereInter );
+
+				var geometry = new THREE.Geometry();
+
+				var point = new THREE.Vector3();
+				var direction = new THREE.Vector3();
+
+				for ( var i = 0; i < 50; i ++ ) {
+
+					direction.x += Math.random() - 0.5;
+					direction.y += Math.random() - 0.5;
+					direction.z += Math.random() - 0.5;
+					direction.normalize().multiplyScalar( 10 );
+
+					point.add( direction );
+					// origins.push( point.clone() );
+
+					geometry.vertices.push( point.clone() );
+
+				}
+
+				parentTransform = new THREE.Object3D();
+				// parentTransform.position.x = Math.random() * 40 - 20;
+				// parentTransform.position.y = Math.random() * 40 - 20;
+				// parentTransform.position.z = Math.random() * 40 - 20;
+
+				// parentTransform.rotation.x = Math.random() * 2 * Math.PI;
+				// parentTransform.rotation.y = Math.random() * 2 * Math.PI;
+				// parentTransform.rotation.z = Math.random() * 2 * Math.PI;
+
+				// parentTransform.scale.x = Math.random() + 0.5;
+				// parentTransform.scale.y = Math.random() + 0.5;
+				// parentTransform.scale.z = Math.random() + 0.5;
+
+				for ( var i = 0; i < 50; i ++ ) {
+
+					var type = Math.random() > 0.5 ? THREE.LineStrip : THREE.LinePieces;
+					var object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ), type );
+
+					object.position.x = Math.random() * 400 - 200;
+					object.position.y = Math.random() * 400 - 200;
+					object.position.z = Math.random() * 400 - 200;
+
+					object.rotation.x = Math.random() * 2 * Math.PI;
+					object.rotation.y = Math.random() * 2 * Math.PI;
+					object.rotation.z = Math.random() * 2 * Math.PI;
+
+					object.scale.x = Math.random() + 0.5;
+					object.scale.y = Math.random() + 0.5;
+					object.scale.z = Math.random() + 0.5;
+
+					parentTransform.add( object );
+
+
+				// for ( var i = 0; i < 50; i ++ ) {
+					var sgem = new THREE.SphereGeometry( 2 );
+					var smat = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+					var smesh = new THREE.Mesh( sgem, smat );
+					var spos = new THREE.Vector3();
+					spos.addVectors( object.position, object.geometry.vertices[0] );
+
+					smesh.position.copy( object.position );
+					scene.add(smesh);
+					if(i < 10){
+						for(var v = 0; v < object.geometry.vertices.length; v++){
+							var egem = new THREE.SphereGeometry( 2 );
+							var emat = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+							var emesh = new THREE.Mesh( egem, emat );
+
+							// var erot = new THREE.Vector3();
+							// erot.multiply(object.geometry.vertices[v], object.rotation);
+
+							var escale = new THREE.Vector3();
+							escale.multiplyVectors( object.scale, object.geometry.vertices[v] );
+							escale.applyAxisAngle( object.rotation, 1);
+
+							var epos = new THREE.Vector3();
+							epos.addVectors( object.position, escale );
+							// epos.addVectors( epos, erotpos );
+							// epos.addVectors( object.position, object.geometry.vertices[v] );
+							// epos.applyAxisAngle( object.position, 0.1 );//, Math.random() );
+							// epos = object.geometry.vertices[0].clone();
+							console.log();
+
+							emesh.position.copy( epos );
+							scene.add(emesh);
+						}
+					}
+
+
+				}
+
+				scene.add( parentTransform );
+
+				raycaster = new THREE.Raycaster();
+				raycaster.linePrecision = 3;
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( 0x0000aa );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild(renderer.domElement);
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+				//
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+
+				theta += rotationSpeed;
+
+				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+
+				// camera.position.x = mouse.x*100;
+				// camera.position.y = mouse.y*100;
+				camera.lookAt( scene.position );
+
+				camera.updateMatrixWorld();
+
+				// find intersections
+
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObjects( parentTransform.children, true);
+
+				if ( intersects.length > 0 ) {
+
+					if ( currentIntersected !== undefined ) {
+
+						currentIntersected.material.linewidth = 1;
+
+					}
+
+					currentIntersected = intersects[ 0 ].object;
+					currentIntersected.material.linewidth = 5;
+
+					sphereInter.visible = true;
+					sphereInter.position.copy( intersects[ 0 ].point );
+
+				} else {
+
+					if ( currentIntersected !== undefined ) {
+
+						currentIntersected.material.linewidth = 1;
+
+					}
+
+					currentIntersected = undefined;
+
+					sphereInter.visible = false;
+
+				}
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
