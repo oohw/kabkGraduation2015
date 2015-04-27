@@ -3,7 +3,7 @@
 	<head>
 		<title>office of hard work - graduation 2015 sketch 0.2a</title>
 		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="viewport" logo="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body {
 				font-family: Monospace;
@@ -22,6 +22,13 @@
 			}
 			.name:hover{
 				text-decoration: underline;
+			}
+			#logo {
+				 background:  url('img/gradshow.png') no-repeat;
+				 background-size: 100%;
+			}
+			#info a {
+				background-color: #000;
 			}
 		</style>
 	</head>
@@ -53,6 +60,8 @@
 			animate();
 
 			function init() {
+				var width = $('body').outerWidth();
+				var height = $('body').outerHeight();
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -65,8 +74,24 @@
 				info.style.top = '10px';
 				info.style.width = '100%';
 				info.style.textAlign = 'center';
+				info.setAttribute("id", "info");
 				info.innerHTML = '<a href="http://oohw.net" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
 				container.appendChild( info );
+
+				var logo = document.createElement( 'div' );
+				logo.style.position = 'absolute';
+
+				var padding = width*0.01;
+				logo.style.top = padding + 'px';
+				logo.style.right = padding + 'px';
+				var scaler = width*0.24;
+				// var scaler = 0.0261437908496732;
+				var logowidth = scaler;
+				var logoheight = 318/459*logowidth;
+				logo.style.width = logowidth +'px'; // 459 318
+				logo.style.height = logoheight + 'px';
+				logo.setAttribute("id", "logo");
+				document.body.appendChild( logo );
 
 				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
 
