@@ -5,8 +5,16 @@
       <title>office of hard work - kabk2012 - v0.3a</title>
 
       <style type="text/css">
+         @font-face {
+             font-family: UniversLTStd;
+             src: url(fonts/UniversLTStd.otf);
+         }
+         @font-face {
+             font-family: BelweStd-Medium;
+             src: url(fonts/BelweStd-Medium.otf);
+         }
          .universenames {
-            font-family: 'helvetica';
+            font-family: UniversLTStd;
             background-color: #0055ef;
             position: absolute;
             top:0px;
@@ -35,7 +43,9 @@
          }
          #header input {
 
-          background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjYxRDEzQTBCMzI0MzExRTFBNDYzRkQ4Qzc3RDdBOTg5IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjYxRDEzQTBDMzI0MzExRTFBNDYzRkQ4Qzc3RDdBOTg5Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjFEMTNBMDkzMjQzMTFFMUE0NjNGRDhDNzdEN0E5ODkiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjFEMTNBMEEzMjQzMTFFMUE0NjNGRDhDNzdEN0E5ODkiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz52VTCHAAABFUlEQVR42uxV0Q2DIBBV4z8bdAM26AZ1Ap3AToAT6AR1Ap2gbuAGzKD/TkCP5NmQRpQaSH96yQsJHO/k7t0ZK6WikJZEgS14gHSeZxX6BQuhwerL3pw6ACMIQkuQHsgluDQnM2ugN3rgrK33ha3INdbqBHn1wWFVUU7ghMKxLgt8Oe46yVQ7lrgoD/JdwDf/tg+ueK4mGDfOR5zV8D3VaBwFy6CM1VrsCfjYG81BclrPHVZp7HcoLN8LshdgNMg50pDh7In+uSCIsKUpnqZJWfQ8EB4gOlLRnXBzVVFvpIA5yJTBV241aeLSLI622aRmiho8k3uYRcM6LlLksEWzMA/DjqP4+oNLW5G9Wfz/J/88wEuAAQA9yExzBAEQqwAAAABJRU5ErkJggg==) no-repeat 360px 0 #fff;
+          background: url('img/search_icon.png') no-repeat 360px 0 #fff;
+          background-size: 20px;
+          background-position: 374px 6px;
             width: 400px;
             height: 30px;
             border-style: solid;
@@ -44,7 +54,7 @@
             border-bottom-width: 2px;
             color: #fff;
             padding: 0px 0px 0px 5px;
-            font-family: 'helvetica';
+            font-family: UniversLTStd;
             font-size: 21px;
          }
          #list {
@@ -61,7 +71,7 @@
          #list li a {
             color: #fff;
             text-decoration: none;
-            font-family: 'helvetica';
+            font-family: UniversLTStd;
             font-size: 21px;
          }
          #list li a:hover {
@@ -77,6 +87,7 @@
       <script src='js/dat.gui.min.js'></script>
       <script src="js/jquery-2.1.3.js"></script>
       <script>
+         var bgColor = 'rgb(82,122,174)';
          var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
                                 window.mozRequestAnimationFrame || window.msRequestAnimationFrame || 
                                 function(c) {window.setTimeout(c, 15)};
@@ -129,28 +140,28 @@
 
          var filter;
 
-         var studentNames = ["Talisha Aleman","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele","Cesar Romine","Leila Sprankle","Richard Herdt","Melissia Harger","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele","Cesar Romine","Leila Sprankle","Richard Herdt","Melissia Harger"];
+         var studentNames = ["Talisha Aleman","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele"];
 
 
          function onloadHandler()
          {
-            $(document).mousemove(function( event ) {
-               mouseX = event.clientX;
-               mouseY = event.clientY;
-               // console.log(event);
-               // if(typeof event.clientX === "undefined" || typeof mouseY === "undefined") {
-               //    alert("undefined");
-               // } 
-            //    // relMouseX = $(window).outerWidth()/2 - mouseX;
-               relMouseX = parseFloat( (map(mouseX, 0, width, -1, 1)).toFixed(2) );
-               relMouseY = parseFloat( (map(mouseY, 0, height, -1, 1)).toFixed(2) );
-               // console.log(relMouseX + " : " + relMouseY + "  /  " + mouseX + " : " + mouseY + "  { " + $(window).outerWidth());
+            // $(document).mousemove(function( event ) {
+            //    mouseX = event.clientX;
+            //    mouseY = event.clientY;
+            //    // console.log(event);
+            //    // if(typeof event.clientX === "undefined" || typeof mouseY === "undefined") {
+            //    //    alert("undefined");
+            //    // } 
+            // //    // relMouseX = $(window).outerWidth()/2 - mouseX;
+            //    relMouseX = parseFloat( (map(mouseX, 0, width, -1, 1)).toFixed(2) );
+            //    relMouseY = parseFloat( (map(mouseY, 0, height, -1, 1)).toFixed(2) );
+            //    // console.log(relMouseX + " : " + relMouseY + "  /  " + mouseX + " : " + mouseY + "  { " + $(window).outerWidth());
 
-            });
+            // });
 
             // get the canvas DOM element and the 2D drawing context
             var canvas = document.getElementById('canvas');
-            $('#canvas').css('background-color','rgb(0,120,220)');
+            $('#canvas').css('background-color',bgColor);
             $('#canvas').css('position','absolute');
             $('#canvas').css('top',0);
             $('#canvas').css('left',0);
@@ -217,23 +228,23 @@
             var renderer = new Phoria.CanvasRenderer(canvas);
             
             // add a grid to help visualise camera position etc.
-            var plane = Phoria.Util.generateTesselatedPlane(10,10,0,10);
-            var grid = Phoria.Entity.create({
-               points: plane.points,
-               edges: plane.edges,
-               polygons: plane.polygons,
-               style: {
-                  color: [255,255,255],
-                  opacity: 0.1,
-                  drawmode: "wireframe",
-                  shademode: "plain",
-                  linewidth: 0.5,
-                  objectsortmode: "back"
-               }
-            });
-            grid.translateY(0);
-            // grid.rotateX(Math.PI/2);
-            scene.graph.push(grid);
+            // var plane = Phoria.Util.generateTesselatedPlane(10,10,0,10);
+            // var grid = Phoria.Entity.create({
+            //    points: plane.points,
+            //    edges: plane.edges,
+            //    polygons: plane.polygons,
+            //    style: {
+            //       color: [255,255,255],
+            //       opacity: 0.1,
+            //       drawmode: "wireframe",
+            //       shademode: "plain",
+            //       linewidth: 0.5,
+            //       objectsortmode: "back"
+            //    }
+            // });
+            // grid.translateY(0);
+            // // grid.rotateX(Math.PI/2);
+            // scene.graph.push(grid);
 
             // // add some axis lines to the grid
             // var axis = Phoria.Entity.create({
@@ -364,7 +375,8 @@
                var distortion = Math.random()*0.01;
                var curviness = Math.random() > 0.7 ? Math.random().toFixed(1) : 0;
 
-               var line = makeLine(_start, _end, 60, distortion, curviness, i%2==0);
+               var amountPoints = i%2 == 0 ? 40 : 10;
+               var line = makeLine(_start, _end, amountPoints, distortion, curviness, i%2==0);
 
                lines.push(line);
 
@@ -472,7 +484,7 @@
             setTimeout(function(){
                textshifter = true;
             },100);
-            $('.universenames').css('background-color','rgb(0,120,220)');
+            $('.universenames').css('background-color',bgColor);
             $('#list').css('background-color','transparent');
 
             setupScrolling();
@@ -480,7 +492,7 @@
             function lookatthisone(index){
 
                // $('#search input').val(studentNames[i]);
-               console.log("startup");
+               // console.log("startup");
                lookTo = vec3.fromValues(
                   student_points[index].points[0].x,
                   student_points[index].points[0].y,
@@ -492,7 +504,7 @@
                    duration: 1000,
                    step: function() { 
                      lookatTransitionor = this.animator;
-                     console.log(lookatTransitionor);
+                     // console.log(lookatTransitionor);
                        // $('#el').text(Math.ceil(this.someValue));
                    },
                    complete: function(){
@@ -517,6 +529,9 @@
 
             $('#list').height(height*0.8);
 
+            $("body").css("overflow", "hidden");
+            $("canvas").css("overflow", "hidden");
+
 
          }
 
@@ -527,14 +542,14 @@
          function setupScrolling(){
             //  //Firefox
           $(canvas).bind('DOMMouseScroll', function(e){
-            console.log(e.originalEvent.detail);
+            // console.log(e.originalEvent.detail);
               if(e.originalEvent.detail > 0) {
                   //scroll down
-                  console.log('Down');
+                  // console.log('Down');
                   rotationY += 0.1;
               }else {
                   //scroll up
-                  console.log('Up');
+                  // console.log('Up');
                   rotationY += 0.01;
               }
               //prevent page fom scrolling
@@ -543,26 +558,26 @@
 
           //IE, Opera, Safari
           $(canvas).bind('mousewheel', function(e){
-            console.log(e);
+            // console.log(e);
               if(e.originalEvent.wheelDeltaY < 0) {
                   //scroll down
-                  console.log('Down');
+                  // console.log('Down');
                   rotationY -= 0.01 * e.originalEvent.wheelDeltaY;
                   rotationY = Math.max(3.0,rotationY);
               }else {
                   //scroll up
-                  console.log('Up');
+                  // console.log('Up');
                   rotationY -= 0.01 * e.originalEvent.wheelDeltaY;
                   rotationY = Math.max(3.0,rotationY);
               }
               if(e.originalEvent.wheelDeltaX < 0) {
                   //scroll down
-                  console.log('LEFT');
+                  // console.log('LEFT');
                   rotationX += 0.0001*e.originalEvent.wheelDeltaX;
                   rotationDirection = -1;
               }else {
                   //scroll up
-                  console.log('RIGHT');
+                  // console.log('RIGHT');
                   rotationX += 0.0001*e.originalEvent.wheelDeltaX;
                   rotationDirection = 1;
               }
@@ -612,7 +627,7 @@
            $(function () {
              for(var i = 0; i < studentNames.length; ++i){
                $('#list').append(
-                  '<li><a href="#/australia/" id="listnames' + i + '" data-index="' + i + '" class="listnames">' + studentNames[i] + '</a></li>');
+                  '<li><a href="#" id="listnames' + i + '" data-index="' + i + '" class="listnames">' + studentNames[i] + '</a></li>');
              };
              listFilter($("#header"), $("#list"));
             $('#search input').val('search');
@@ -638,6 +653,8 @@
          }(jQuery));
 
          $('#search').offset({ left: width/2 - $('#search').outerWidth()/2, top: 20});
+
+         $(window).resize(function(){location.reload();});
 
          }
 

@@ -5,8 +5,13 @@
       <title>office of hard work - kabk2012 - v0.3a</title>
 
       <style type="text/css">
-         .universenames {
-            font-family: 'helvetica';
+         @font-face {
+             font-family: UniversLTStd;
+             src: url(fonts/UniversLTStd.otf);
+         }
+         .universenames, .universenamesblue {
+            font-family: 'UniversLTStd';
+            font-size: 42px;
             background-color: #0055ef;
             position: absolute;
             top:0px;
@@ -14,6 +19,7 @@
             color: #fff;
             padding: 5px;
          }
+
          .universenames {
             text-decoration: none;
          }
@@ -32,6 +38,7 @@
             position: absolute;
             top: 0px;
             left: 0px;
+            display: none;
          }
          #header input {
 
@@ -67,6 +74,11 @@
          #list li a:hover {
             color: #fff;
             text-decoration: underline;
+         }
+         #logo {
+            position: absolute;
+            top: 0px;
+            left: 0px;
          }
       </style>
       <script src="js/gl-matrix.js"></script>
@@ -129,7 +141,7 @@
 
          var filter;
 
-         var studentNames = ["ArtScience","Fine Arts","Graphic Design","Interactive/Media/Design","Interior Architecture & Furtniture Design","Master Artistic Research","Master ArtScience","Master Interior Architecture","Master Type and Media","PGC Industrial Design","Photography","Textile & Fashion"];
+         var studentNames = ["Prinsessegracht 20","The Hague","graduation.kabk.nl","7-6-2015"]//["ArtScience","Fine Arts","Graphic Design","Interactive/Media/Design","Interior Architecture & Furtniture Design","Master Artistic Research","Master ArtScience","Master Interior Architecture","Master Type and Media","PGC Industrial Design","Photography","Textile & Fashion"];
 
 
          function onloadHandler()
@@ -340,9 +352,9 @@
             // grph.translateX(-5).translateZ(-0.5);
             // scene.graph.push(grph);
 
-            var boundaryX = 4;
-            var boundaryY = 4;
-            var boundaryZ = 4;
+            var boundaryX = 2;
+            var boundaryY = 2;
+            var boundaryZ = 2;
 
             for(var i = 0; i < studentNames.length; i++){
                var student = vec3.fromValues((Math.random()-0.5)*2*boundaryX,(Math.random()-0.5)*2*boundaryY,(Math.random()-0.5)*2*boundaryZ);
@@ -351,10 +363,11 @@
                var line = makeLine(student, student, 0, 0, 0, false);
                student_points.push(line);
                scene.graph.push(student_points[i]);
+               $("#backgrounds").append('<a class="universenamesblue" data-index="' + i + '"><nobr>' + studentNames[i] + '</nobr></a>');
                $("#names").append('<a class="universenames" id="universe' + studentNames[i] +  '" data-index="' + i + '"><nobr>' + studentNames[i] + '</nobr></a>');
                // $("#rects").append("<div class=\"rects\"></div>");
             }
-            for(var i = 0; i < students.length*2; i++){
+            for(var i = 0; i < students.length; i++){
                var a = i%students.length;
                var b = Math.floor(Math.random()*students.length);
                while (a === b)
@@ -363,8 +376,8 @@
                var _end = vec3.fromValues(students[b][0],students[b][1],students[b][2]);
                var distortion = Math.random()*0.01;
                var curviness = Math.random() > 0.7 ? Math.random().toFixed(1) : 0;
-
-               var line = makeLine(_start, _end, 60, distortion, curviness, i%2==0);
+               var amountPoints = i%2 == 0 ? 60 : 60;
+               var line = makeLine(_start, _end, amountPoints, distortion, curviness, i%2==0);
 
                lines.push(line);
 
@@ -386,6 +399,7 @@
                   // console.log(student_points[0].getScreenBounds());
                      // console.log("textshifter " + textshifter);
                      var kids = $("#names").children();
+                     var backkids = $("#backgrounds").children();
                      // var rects = $("#rects").children();
                      var widthcorrection = width/orig_width;
                      var heightcorrection = height/orig_height;
@@ -398,8 +412,11 @@
                         if(bounds.miny > 0 && bounds.miny < height && bounds.minx < width && bounds.minx > 0){
                            var shiftx = $(kids[i]).outerWidth() * 0.5;
                            var shifty = $(kids[i]).outerHeight() * 0.5;
+
+                           $(backkids[i]).offset({top: bounds.miny - shifty, left: bounds.minx - shiftx});
                            $(kids[i]).offset({top: bounds.miny - shifty, left: bounds.minx - shiftx});
                            $(kids[i]).css('display','block');
+                           $(backkids[i]).css('display','block');
                         } else {
                            $(kids[i]).css('display','none');
                         }
@@ -472,7 +489,9 @@
             setTimeout(function(){
                textshifter = true;
             },100);
-            $('.universenames').css('background-color','rgb(0,120,220)');
+            $('.universenames').css('background-color','transparent');
+            $('.universenamesblue').css('background-color','rgb(0,120,220)');
+            $('.universenamesblue').css('color','rgb(0,120,220)');
             $('#list').css('background-color','transparent');
 
             setupScrolling();
@@ -516,6 +535,8 @@
             });
 
             $('#list').height(height*0.8);
+            $("body").css("overflow", "hidden");
+            $("canvas").css("overflow", "hidden");
 
 
          }
@@ -647,6 +668,7 @@
    <body id="body" style="background-color: #0000aa">
       <canvas id="canvas" width="768" height="512" style="background-color: #fff"></canvas>
       <!-- <div id="rects"> </div> -->
+      <div id="backgrounds"> </div>
       <div id="names"> </div>
 
 
@@ -655,6 +677,7 @@
   <ul id="list">
    </ul>
 </div>
+<div id="logo"><img src="img/KABK_GF-01.png" border="0"></div>
 
    </body>
 </html>
