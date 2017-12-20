@@ -1,382 +1,680 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<title>office of hard work - graduation 2015 sketch 0.2a</title>
-		<meta charset="utf-8">
-		<meta name="viewport" logo="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-		<style>
-			body {
-				font-family: Monospace;
-				background-color: #00a;
-				margin: 0px;
-				overflow: hidden;
-			}
-			div a {
-				color: #fff;
-			}
-			.name {
-				font-family: Helvetica;
-			}
-			.name {
-				text-decoration: none;
-			}
-			.name:hover{
-				text-decoration: underline;
-			}
-			#logo {
-				 background:  url('img/gradshow.png') no-repeat;
-				 background-size: 100%;
-			}
-			#info a {
-				background-color: #000;
-			}
-		</style>
-	</head>
-	<body>
-	<script src="js/jquery-2.1.3.js"></script>
-		<script src="js/three.js"></script>
-
-		<script src="js/stats.min.js"></script>
-
-		<script>
-
-			var container, stats;
-			var camera, scene, raycaster, renderer, parentTransform, sphereInter;
-			var origins = [];
-
-			var smeshes;
-
-			var mouse = new THREE.Vector2();
-			var radius = 100, theta = 0;
-
-			var currentIntersected;
-
-			var standardRotationSpeed = 0.5;
-			var rotationSpeed = standardRotationSpeed;
-
-			var names;
-
-			init();
-			animate();
-
-			function init() {
-				var width = $('body').outerWidth();
-				var height = $('body').outerHeight();
-
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
-
-				names = document.createElement( 'div' );
-				document.body.appendChild( names );
-
-				var info = document.createElement( 'div' );
-				info.style.position = 'absolute';
-				info.style.top = '10px';
-				info.style.width = '100%';
-				info.style.textAlign = 'center';
-				info.setAttribute("id", "info");
-				info.innerHTML = '<a href="http://oohw.net" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
-				container.appendChild( info );
-
-				var logo = document.createElement( 'div' );
-				logo.style.position = 'absolute';
-
-				var padding = width*0.01;
-				logo.style.top = padding + 'px';
-				logo.style.right = padding + 'px';
-				var scaler = width*0.24;
-				// var scaler = 0.0261437908496732;
-				var logowidth = scaler;
-				var logoheight = 318/459*logowidth;
-				logo.style.width = logowidth +'px'; // 459 318
-				logo.style.height = logoheight + 'px';
-				logo.setAttribute("id", "logo");
-				document.body.appendChild( logo );
-
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-
-				scene = new THREE.Scene();
-
-				var geometry = new THREE.SphereGeometry( 1 );
-				var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
-
-				sphereInter = new THREE.Mesh( geometry, material );
-				sphereInter.visible = false;
-				scene.add( sphereInter );
+<html>
+   <head>
+      <meta charset="utf-8">
+      <title>office of hard work - kabk2012 - v0.3a</title>
+
+      <style type="text/css">
+         @font-face {
+             font-family: UniversLTStd;
+             src: url(fonts/UniversLTStd.otf);
+         }
+         @font-face {
+             font-family: BelweStd-Medium;
+             src: url(fonts/BelweStd-Medium.otf);
+         }
+         .universenames {
+            font-family: UniversLTStd;
+            background-color: #000000; /*#0055ef;*/
+            position: absolute;
+            top:0px;
+            left:0px;
+            color: #fff;
+            padding: 5px;
+         }
+         .universenames {
+            text-decoration: none;
+         }
+         .universenames:hover {
+            /*text-decoration: underline;*/
+            cursor: pointer;
+             color: red;
+         }
+         /*.rects {
+            background-color: transparent;
+            border: solid 1px #f0f;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+         }*/
+         #search{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+         }
+         #header input {
+
+          background: url('img/search_icon.png') no-repeat 360px 0 #fff;
+          background-size: 20px;
+          background-position: 374px 6px;
+            width: 400px;
+            height: 30px;
+            border-style: solid;
+            border-width: 0px;
+            border-color: #fff;
+            border-bottom-width: 2px;
+            color: #fff;
+            padding: 0px 0px 0px 5px;
+            font-family: UniversLTStd;
+            font-size: 21px;
+         }
+         #list {
+            background-color: #fff;
+            display: none;
+            opacity: 0;
+            padding: 0px 0px 15px 0px;
+            list-style-type: none;
+            overflow-y: scroll;
+         }
+         #list li {
+            padding: 0px 0px 5px 5px;
+         }
+         #list li a {
+            color: #fff;
+            text-decoration: none;
+            font-family: UniversLTStd;
+            font-size: 21px;
+         }
+         #list li a:hover {
+            color: #fff;
+            text-decoration: underline;
+         }
+      </style>
+      <script src="js/gl-matrix.js"></script>
+      <script src="js/phoria-util.js"></script>
+      <script src="js/phoria-entity.js"></script>
+      <script src="js/phoria-scene.js"></script>
+      <script src="js/phoria-renderer.js"></script>
+      <script src='js/dat.gui.min.js'></script>
+      <script src="js/jquery-2.1.3.js"></script>
+      <script>
+         var bgColor = 'rgb(25,25,25)';
+         var requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
+                                window.mozRequestAnimationFrame || window.msRequestAnimationFrame || 
+                                function(c) {window.setTimeout(c, 15)};
+         /**
+            Phoria
+            pho·ri·a (fôr-)
+            n. The relative directions of the eyes during binocular fixation on a given object
+         */
+
+         // bind to window onload event
+         window.addEventListener('load', onloadHandler, false);
 
-				var geometry = new THREE.Geometry();
-
-				var point = new THREE.Vector3();
-				var direction = new THREE.Vector3();
-
-				for ( var i = 0; i < 50; i ++ ) {
-
-					direction.x += Math.random() - 0.5;
-					direction.y += Math.random() - 0.5;
-					direction.z += Math.random() - 0.5;
-					direction.normalize().multiplyScalar( 10 );
-
-					point.add( direction );
-
-					geometry.vertices.push( point.clone() );
-
-				}
-
-				parentTransform = new THREE.Object3D();
-				smeshes = new THREE.Object3D();
-				// parentTransform.position.x = Math.random() * 40 - 20;
-				// parentTransform.position.y = Math.random() * 40 - 20;
-				// parentTransform.position.z = Math.random() * 40 - 20;
-
-				// parentTransform.rotation.x = Math.random() * 2 * Math.PI;
-				// parentTransform.rotation.y = Math.random() * 2 * Math.PI;
-				// parentTransform.rotation.z = Math.random() * 2 * Math.PI;
-
-				// parentTransform.scale.x = Math.random() + 0.5;
-				// parentTransform.scale.y = Math.random() + 0.5;
-				// parentTransform.scale.z = Math.random() + 0.5;
-
-
-				// for ( var i = 0; i < 50; i ++ ) {
-				// 	var origin = new THREE.Vector3();
-				// 	origin.x =  Math.random() * 400 - 200;
-				// 	origin.y =  Math.random() * 400 - 200;
-				// 	origin.z =  Math.random() * 400 - 200;
-
-				// 	origins.push( origin );
-				// }
-
-				var mrRandom = ["Talisha Aleman","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele","Cesar Romine","Leila Sprankle","Richard Herdt","Melissia Harger"];
-
-				for ( var i = 0; i < 50; i ++ ) {
-
-					var type = Math.random() > 0.5 ? THREE.LineStrip : THREE.LinePieces;
-					var object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ), type );
-
-					object.position.x = Math.random() * 400 - 200;
-					object.position.y = Math.random() * 400 - 200;
-					object.position.z = Math.random() * 400 - 200;
-
-					object.rotation.x = Math.random() * 2 * Math.PI;
-					object.rotation.y = Math.random() * 2 * Math.PI;
-					object.rotation.z = Math.random() * 2 * Math.PI;
-
-					object.scale.x = Math.random() + 0.5;
-					object.scale.y = Math.random() + 0.5;
-					object.scale.z = Math.random() + 0.5;
-
-					parentTransform.add( object );
-
-
-				// for ( var i = 0; i < 50; i ++ ) {
-					var sgem = new THREE.SphereGeometry( 2 );
-					var smat = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
-					var smesh = new THREE.Mesh( sgem, smat );
-					smesh.position.copy( object.position );
-
-					smeshes.add(smesh);
-					// scene.add(smesh);
-
-					origins.push( object.position );
-
-
-					var name = document.createElement( 'div' );
-					name.style.position = 'absolute';
-					name.style.top = '10px';
-					name.style.width = '200px';
-					name.style.textAlign = 'center';
-
-					name.innerHTML = '<a class="name" href="#">' + mrRandom[i] + '</a>';
-					names.appendChild( name );
-
-					// if(i < 10){
-					// 	for(var v = 0; v < object.geometry.vertices.length; v++){
-					// 		var egem = new THREE.SphereGeometry( 2 );
-					// 		var emat = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-					// 		var emesh = new THREE.Mesh( egem, emat );
-
-					// 		// var erot = new THREE.Vector3();
-					// 		// erot.multiply(object.geometry.vertices[v], object.rotation);
-
-					// 		var escale = new THREE.Vector3();
-					// 		escale.multiplyVectors( object.scale, object.geometry.vertices[v] );
-					// 		escale.applyAxisAngle( object.rotation, 1);
-
-					// 		var epos = new THREE.Vector3();
-					// 		epos.addVectors( object.position, escale );
-					// 		// epos.addVectors( epos, erotpos );
-					// 		// epos.addVectors( object.position, object.geometry.vertices[v] );
-					// 		// epos.applyAxisAngle( object.position, 0.1 );//, Math.random() );
-					// 		// epos = object.geometry.vertices[0].clone();
-					// 		console.log();
-
-					// 		emesh.position.copy( epos );
-					// 		scene.add(emesh);
-					// 	}
-					// }
-
-
-				}
-
-				// scene.add(smeshes);
-
-				scene.add( parentTransform );
-
-				raycaster = new THREE.Raycaster();
-				raycaster.linePrecision = 3;
-
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setClearColor( 0x0000aa );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				container.appendChild(renderer.domElement);
-
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-				container.appendChild( stats.domElement );
-
-				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
-
-				window.addEventListener( 'resize', onWindowResize, false );
-
-
-				$('.name').mouseover(function(event) {
-					/* Act on the event */
-					rotationSpeed = 0.05;
-					console.log('yeah');
-				});
-				$('.name').mouseout(function(event) {
-					/* Act on the event */
-					rotationSpeed = standardRotationSpeed;
-					console.log('yeah');
-				});
-			}
-
-			function onWindowResize() {
-
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
-
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-			}
-
-			function onDocumentMouseMove( event ) {
-
-				event.preventDefault();
-
-				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-			}
-
-			//
-
-			function animate() {
-
-				requestAnimationFrame( animate );
-
-				render();
-				stats.update();
-
-			}
-
-			function render() {
-
-				theta += rotationSpeed;
-				var blue = Math.floor((Math.sin(theta*0.1)*35)+200);
-				renderer.setClearColor( 'rgb(0,80,' + blue + ')' );
-
-				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
-				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
-
-				// camera.position.x = mouse.x*100;
-				// camera.position.y = mouse.y*100;
-				camera.lookAt( scene.position );
-
-				camera.updateMatrixWorld();
-
-				// find intersections
-
-				raycaster.setFromCamera( mouse, camera );
-
-				var intersects = raycaster.intersectObjects( parentTransform.children, true);
-
-				if ( intersects.length > 0 ) {
-
-					if ( currentIntersected !== undefined ) {
-
-						currentIntersected.material.linewidth = 1;
-
-					}
-
-					currentIntersected = intersects[ 0 ].object;
-					currentIntersected.material.linewidth = 5;
-
-					// sphereInter.visible = true;
-					sphereInter.position.copy( intersects[ 0 ].point );
-
-				} else {
-
-					if ( currentIntersected !== undefined ) {
-
-						currentIntersected.material.linewidth = 1;
-
-					}
-
-					currentIntersected = undefined;
-
-					sphereInter.visible = false;
-
-				}
-
-				if(theta > rotationSpeed){
-					var mouseovers = raycaster.intersectObjects( smeshes.children );
-
-					if( mouseovers.length > 0 ){
-						for ( var i = 0; i < mouseovers.length; i++){
-							mouseovers[ i ].object.material.color.set( 'rgb(255,' + Math.floor((theta*255)%255) + ',255)' );
-						}
-					}
-				}	
-
-				for ( var i = 0; i < smeshes.children.length; i++){
-					var proj = toScreenPosition(smeshes.children[i], camera);
-					var divElem = names.children[i];
-
-					divElem.style.left = proj.x-100 + 'px';
-					divElem.style.top = proj.y-10 + 'px';
-
-				}
-
-				renderer.render( scene, camera );
-				// rotationSpeed = standardRotationSpeed;\
-			}
-
-			function toScreenPosition(obj, camera)
-			{
-			    var vector = new THREE.Vector3();
-
-			    var widthHalf = 0.5*renderer.context.canvas.width;
-			    var heightHalf = 0.5*renderer.context.canvas.height;
-
-			    obj.updateMatrixWorld();
-			    vector.setFromMatrixPosition(obj.matrixWorld);
-			    vector.project(camera);
-
-			    vector.x = ( vector.x * widthHalf ) + widthHalf;
-			    vector.y = - ( vector.y * heightHalf ) + heightHalf;
-
-			    return { 
-			        x: vector.x,
-			        y: vector.y
-			    };
-
-			};
-
-		</script>
-
-	</body>
+         var scene;
+         var mouseX;
+         var mouseY;
+         var relMouseX = 0;
+         var relMouseY = 0;
+         var wasd = false; // for later maybe
+
+         var width = $(window).outerWidth();
+         var height = $(window).outerHeight();
+
+         var lines = Array();
+
+         var textshifter = false;
+
+         var orig_width = 767;
+         var orig_height = 510;
+
+         var students = Array();
+         var student_points = Array();
+
+         var fastRotation = 0.006;
+         var slowRotation = 0.0002;
+         var rotationDirection = 1;
+
+         var rotationSpeedX = fastRotation;
+         var rotationSpeedY = fastRotation;
+
+         var rotationX = 0.0;
+         var rotationY = 24.0;
+
+         var cameraPosition = vec3.fromValues(0,0,0);
+         var cameraTurnaround = vec3.fromValues(0,0,0);
+         var origin = vec3.fromValues(0,0,0);
+
+         var lookatTransitionor = 0.0;
+         var lookatLock = false;
+         var lookTo = vec3.fromValues(0,0,0);
+
+         var filter;
+
+         var clr_1 = [255,255,2555555];
+
+         var studentNames = ["Talisha Aleman","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele"];
+
+
+         function onloadHandler()
+         {
+            // $(document).mousemove(function( event ) {
+            //    mouseX = event.clientX;
+            //    mouseY = event.clientY;
+            //    // console.log(event);
+            //    // if(typeof event.clientX === "undefined" || typeof mouseY === "undefined") {
+            //    //    alert("undefined");
+            //    // } 
+            // //    // relMouseX = $(window).outerWidth()/2 - mouseX;
+            //    relMouseX = parseFloat( (map(mouseX, 0, width, -1, 1)).toFixed(2) );
+            //    relMouseY = parseFloat( (map(mouseY, 0, height, -1, 1)).toFixed(2) );
+            //    // console.log(relMouseX + " : " + relMouseY + "  /  " + mouseX + " : " + mouseY + "  { " + $(window).outerWidth());
+
+            // });
+
+            // get the canvas DOM element and the 2D drawing context
+            var canvas = document.getElementById('canvas');
+            $('#canvas').css('background-color',bgColor);
+            $('#canvas').css('position','absolute');
+            $('#canvas').css('top',0);
+            $('#canvas').css('left',0);
+            $('#canvas').css('width',$(window).outerWidth());
+            $('#canvas').css('height',$(window).outerHeight());
+            
+            // create the scene and setup camera, perspective and viewport
+            scene = new Phoria.Scene();
+            scene.camera.position = {x:0.0, y:2, z:-20.0};
+            scene.camera.lookat = {x:0.0, y:0.0, z:0.0};
+            scene.perspective.fov = 25;
+            scene.perspective.aspect = canvas.width / canvas.height;
+            scene.viewport.width = canvas.width;
+            scene.viewport.height = canvas.height;
+
+            scene.onCamera(function(position, lookAt, up) {
+
+               // console.log(rotationY);
+
+               cameraTurnaround[0] = Math.sin(rotationX)*rotationY;
+               cameraTurnaround[2] = Math.cos(rotationX)*rotationY;
+               cameraTurnaround[1] = 0;
+
+               var lookatme = vec3.create();
+               var pos = vec3.create();
+
+               vec3.add(pos,cameraPosition,cameraTurnaround);
+
+               vec3.lerp(lookatme, origin, lookTo, lookatTransitionor);//Math.sin(rotationX*20)*0.5+0.5);
+               vec3.add(pos, pos, lookatme);
+
+               scene.camera.position.x = pos[0];
+               scene.camera.position.y = pos[1];
+               scene.camera.position.z = pos[2];
+
+               scene.camera.lookat.x = lookatme[0];
+               scene.camera.lookat.y = lookatme[1];
+               scene.camera.lookat.z = lookatme[2];
+            //    var rotMatrix = mat4.create();
+            //    if(wasd){
+            //       var rotater = vec3.fromValues(relMouseX, relMouseY, 0);
+            //       mat4.rotate(rotMatrix, rotMatrix, rotationX, rotater);
+            //                         rotationX = 360;
+            //       // rotationX = relMouseX*Math.PI;
+            //       // rotationY = relMouseY*Math.PI;
+            //    } else {
+            //       mat4.rotateX(rotMatrix, rotMatrix, rotationX);
+            //       mat4.rotateY(rotMatrix, rotMatrix, rotationY);
+            //       var deg = 0.5*(rotationX+rotationY);
+            //       var axis = [];
+            //       axis[0] = rotationX;
+            //       axis[1] = rotationY;
+            //       axis[2] = 0;
+            //       // mat4.rotate(rotMatrix, rotMatrix, deg, axis);
+                  rotationX += rotationSpeedX*rotationDirection;
+                  // rotationY += rotationSpeedY;
+            //    }
+            //    vec4.transformMat4(position, position, rotMatrix);
+            //    // console.log('rotationX ' + rotationX);
+            //    // console.log('rotationSpeedX ' + rotationSpeedX);
+            });
+            
+            // create a canvas renderer
+            var renderer = new Phoria.CanvasRenderer(canvas);
+            
+            // add a grid to help visualise camera position etc.
+            // var plane = Phoria.Util.generateTesselatedPlane(10,10,0,10);
+            // var grid = Phoria.Entity.create({
+            //    points: plane.points,
+            //    edges: plane.edges,
+            //    polygons: plane.polygons,
+            //    style: {
+            //       color: clr_1,
+            //       opacity: 0.1,
+            //       drawmode: "wireframe",
+            //       shademode: "plain",
+            //       linewidth: 0.5,
+            //       objectsortmode: "back"
+            //    }
+            // });
+            // grid.translateY(0);
+            // // grid.rotateX(Math.PI/2);
+            // scene.graph.push(grid);
+
+            // // add some axis lines to the grid
+            // var axis = Phoria.Entity.create({
+            //    points: [{x:-5,y:0,z:0},{x:5,y:0,z:0},{x:-5,y:10,z:0}],
+            //    edges: [{a:0, b:1},{a:0,b:2}],
+            //    style: {
+            //       color: [0,0,0],
+            //       drawmode: "wireframe",
+            //       shademode: "plain",
+            //       linewidth: 4,
+            //       linescale: 1,
+            //       objectsortmode: "back"
+            //    }
+            // });
+            // scene.graph.push(axis);
+
+            // some random x/y data to construct our graph object from
+            var data = [0,0,5,15,10,10,15,25,20,25,25,20,30,30,35,15,40,20,45,25,50,20,55,20,60,25,65,35,70,20,75,25,80,20,85,15,90,25,100,50];
+            // function to convert x/y dataset into a 3D object of points and lines - with optional scaling factor
+            var generateGraph = function(data, scale) {
+               var points = [], edges = [];
+               for (var i = 0; i < data.length; i+=2) {
+                  points.push({x:data[i]*scale, y:data[i+1]*scale*0.1, z:0});
+                  if (i > 0)
+                  {
+                     edges.push({a:(~~i/2)-1, b:~~i/2});
+                  }
+               };
+               return Phoria.Entity.create({
+                  points: points,
+                  edges: edges,
+                  style: {
+                     color: clr_1,
+                     drawmode: "wireframe",
+                     shademode: "plain",
+                     linewidth: 1,
+                     linescale: 1,
+                     objectsortmode: "back"
+                  }
+               });
+            };
+
+            var makeLine = function(start, end, distortAmount, distortStrength, curviness, stipple) {
+
+               var distort = Array();
+               var dx = 0; var dy = 0; var dz = 0;
+               for(var i = 0; i < distortAmount; i++){
+                  dx += ((Math.random())-0.5) * distortStrength;
+                  dy += ((Math.random())-0.5) * distortStrength;
+                  dz += ((Math.random())-0.5) * distortStrength;
+                  distort.push(vec3.fromValues(dx,dy,dz));
+               }
+
+               var points = [], edges = [];
+
+               points.push({x:start[0], y: start[1], z: start[2]});
+
+               for (var i = 0; i < distort.length; i++){
+                  var interpol = (i+1)/(distort.length+1);
+                  var dstrength = 1-Math.abs(((i+1)/(distort.length+1)-0.5)*2);
+
+                  var x = start[0]*(1-interpol) + end[0]*interpol + distort[i][0]*dstrength + Math.sin(i*0.1)*curviness * dstrength;
+                  var y = start[1]*(1-interpol) + end[1]*interpol + distort[i][1]*dstrength + Math.cos(i*0.1)*curviness * dstrength;
+                  var z = start[2]*(1-interpol) + end[2]*interpol + distort[i][2]*dstrength + Math.sin(i*0.05)*curviness * dstrength;
+                  var distorted = vec3.fromValues(x,y,z);
+                  points.push({x:distorted[0], y: distorted[1], z: distorted[2]});
+                  if(stipple){
+                     if(i % 2 == 0)
+                     edges.push({a:i, b: i+1});
+                  } else {
+                     edges.push({a:i, b: i+1});
+                  }
+               }
+
+                  points.push({x:end[0], y: end[1], z: end[2]});
+                  edges.push({a:distort.length, b: distort.length+1});
+
+               // points.push({x:end[0], y: end[1], z: end[2]});
+               // edges.push({a:distort.length,b:distort.length+1});
+
+                  // for(var i = 0; i < edges.length; i++){
+                  //    console.log(edges[i].a);
+                  //    console.log(edges[i].b);
+                  // }
+
+               var thingy =  Phoria.Entity.create({
+                  points: points,
+                  edges: edges,
+                  style: {
+                     color: clr_1,
+                     drawmode: "wireframe",
+                     shademode: "plain",
+                     linewidth: 1.3,
+                     linescale: 1,
+                     objectsortmode: "back"
+                  }
+               });
+               ueberline = thingy;
+               return thingy;
+
+            }
+            // add the 3D object to the scene, translate it to show it slightly away from the grid
+            // var grph = generateGraph(data, 0.1);
+            // grph.translateX(-5).translateZ(-0.5);
+            // scene.graph.push(grph);
+
+            var boundaryX = 24;
+            var boundaryY = 14;
+            var boundaryZ = 24;
+
+            for(var i = 0; i < studentNames.length; i++){
+               var student = vec3.fromValues((Math.random()-0.5)*2*boundaryX,(Math.random()-0.5)*2*boundaryY,(Math.random()-0.5)*2*boundaryZ);
+               students.push(student);
+
+               var line = makeLine(student, student, 0, 0, 0, false);
+               student_points.push(line);
+               scene.graph.push(student_points[i]);
+               $("#names").append('<a class="universenames" id="universe' + studentNames[i] +  '" data-index="' + i + '"><nobr>' + studentNames[i] + '</nobr></a>');
+               // $("#rects").append("<div class=\"rects\"></div>");
+            }
+            for(var i = 0; i < students.length; i++){
+               var a = i%students.length;
+               var b = Math.floor(Math.random()*students.length);
+               while (a === b)
+                  b = Math.floor(Math.random()*students.length);
+               var _start = vec3.fromValues(students[a][0],students[a][1],students[a][2]);
+               var _end = vec3.fromValues(students[b][0],students[b][1],students[b][2]);
+               var distortion = Math.random()*0.01;
+               var curviness = Math.random() > 0.7 ? Math.random().toFixed(1) : 0;
+
+               var amountPoints = i%2 == 0 ? 40 : 10;
+               var line = makeLine(_start, _end, amountPoints, distortion, curviness, i%2==0);
+
+               lines.push(line);
+
+               _end = vec3.fromValues(students[b][0],students[b][1],students[b][2]);
+               // line = makeLine(_start, _end, 100,(Math.random()*0.5)+0.1);
+               // scene.graph.push(line);
+            }
+
+            for(var i = 0; i < lines.length; i++) {
+               scene.graph.push(lines[i]);
+            }
+
+            var pause = false;
+            var fnAnimate = function() {
+               if (!pause)
+               {
+                  // execute the model view 3D pipeline and render the scene
+                  if(textshifter){
+                  // console.log(student_points[0].getScreenBounds());
+                     // console.log("textshifter " + textshifter);
+                     var kids = $("#names").children();
+                     // var rects = $("#rects").children();
+                     var widthcorrection = width/orig_width;
+                     var heightcorrection = height/orig_height;
+                     for(var i = 0; i < student_points.length; i++){
+                        var bounds = student_points[i].getScreenBounds();
+                        bounds.minx *= widthcorrection;
+                        bounds.maxx *= widthcorrection;
+                        bounds.miny *= heightcorrection;
+                        bounds.maxy *= heightcorrection;
+                        if(bounds.miny > 0 && bounds.miny < height && bounds.minx < width && bounds.minx > 0){
+                           var shiftx = $(kids[i]).outerWidth() * 0.5;
+                           var shifty = $(kids[i]).outerHeight() * 0.5;
+                           $(kids[i]).offset({top: bounds.miny - shifty, left: bounds.minx - shiftx});
+                           $(kids[i]).css('display','block');
+                        } else {
+                           $(kids[i]).css('display','none');
+                        }
+                        // $(rects[i]).offset({top: bounds.miny, left: bounds.minx});
+                        // $(rects[i]).outerWidth(bounds.maxx - bounds.minx);
+                        // $(rects[i]).outerHeight(bounds.maxy - bounds.miny);
+                     }
+                  }
+
+                  // scene.camera.position.x = Math.sin(rotationX*10)*100;
+                  // scene.camera.position.y = Math.cos(rotationX*10)*100;
+                  // console.log(scene.camera.position.x);
+
+                  scene.modelView();
+                  renderer.render(scene);
+
+                  // scene.camera.
+               }
+               requestAnimFrame(fnAnimate);
+            };
+
+            // key binding
+            document.addEventListener('keydown', function(e) {
+               switch (e.keyCode)
+               {
+                  case 48: // 0
+                     // pause = !pause;
+                     // console.log(student_points[0]);
+                     // console.log(scene.camera);
+                     if(!lookatLock)
+                        lookatthisone(Math.floor(Math.random()*student_points.length));
+
+            // scene.camera.lookat = {x: student_points[0]._coords[0], y: student_points[0]._coords[1], z: student_points[6].z};
+
+                     break;
+                  
+               }
+            }, false);
+
+
+            $('.universenames').mouseover(function( event ) {
+               rotationSpeedX = slowRotation;
+               rotationSpeedY = slowRotation;
+            });
+            $('.universenames').mouseout(function( event ) {
+               rotationSpeedX = fastRotation;
+               rotationSpeedY = fastRotation;
+            });
+
+
+            // add GUI controls
+            // var gui = new dat.GUI();
+            // var f = gui.addFolder('Perspective');
+            // f.add(scene.perspective, "fov").min(5).max(175);
+            // f.add(scene.perspective, "near").min(1).max(100);
+            // f.add(scene.perspective, "far").min(1).max(1000);
+            // f = gui.addFolder('Camera LookAt');
+            // f.add(scene.camera.lookat, "x").min(-100).max(100);
+            // f.add(scene.camera.lookat, "y").min(-100).max(100);
+            // f.add(scene.camera.lookat, "z").min(-100).max(100);
+            // f.open();
+            // f = gui.addFolder('Camera Position');
+            // f.add(scene.camera.position, "x").min(-100).max(100);
+            // f.add(scene.camera.position, "y").min(-100).max(100);
+            // f.add(scene.camera.position, "z").min(-100).max(100);
+            // f.open();
+            
+            // start animation
+            requestAnimFrame(fnAnimate);
+            setTimeout(function(){
+               textshifter = true;
+            },100);
+            $('.universenames').css('background-color',bgColor);
+            $('#list').css('background-color','transparent');
+
+            setupScrolling();
+
+            function lookatthisone(index){
+
+               // $('#search input').val(studentNames[i]);
+               // console.log("startup");
+               lookTo = vec3.fromValues(
+                  student_points[index].points[0].x,
+                  student_points[index].points[0].y,
+                  student_points[index].points[0].z
+                  );
+               lookatLock = true;
+               var animator = 0;
+               $({ animator: 0}).animate({animator: 1}, {
+                   duration: 1000,
+                   step: function() { 
+                     lookatTransitionor = this.animator;
+                     // console.log(lookatTransitionor);
+                       // $('#el').text(Math.ceil(this.someValue));
+                   },
+                   complete: function(){
+                     origin = lookTo;
+                     lookatLock = false;
+                   }
+               });
+
+            }
+
+            $('.universenames').click(function(){
+               var index = $(this).attr('data-index');//.match(/[0-9]+/);
+               lookatthisone(index);
+               $('#searchinput').val(studentNames[index]);
+            });
+
+            $('.listnames').click(function(){
+               var index = $(this).attr('data-index');//.match(/[0-9]+/);
+               lookatthisone(index);
+               $('#searchinput').val(studentNames[index]);
+            });
+
+            $('#list').height(height*0.8);
+
+            $("body").css("overflow", "hidden");
+            $("canvas").css("overflow", "hidden");
+
+
+         }
+
+         function map( value, in_min , in_max , out_min , out_max ) {
+           return ( value - in_min ) * ( out_max - out_min ) / ( in_max - in_min ) + out_min;
+         }
+
+         function setupScrolling(){
+            //  //Firefox
+          $(canvas).bind('DOMMouseScroll', function(e){
+            // console.log(e.originalEvent.detail);
+              if(e.originalEvent.detail > 0) {
+                  //scroll down
+                  // console.log('Down');
+                  rotationY += 0.1;
+              }else {
+                  //scroll up
+                  // console.log('Up');
+                  rotationY += 0.01;
+              }
+              //prevent page fom scrolling
+              return false;
+          });
+
+          //IE, Opera, Safari
+          $(canvas).bind('mousewheel', function(e){
+            // console.log(e);
+              if(e.originalEvent.wheelDeltaY < 0) {
+                  //scroll down
+                  // console.log('Down');
+                  rotationY -= 0.01 * e.originalEvent.wheelDeltaY;
+                  rotationY = Math.max(3.0,rotationY);
+              }else {
+                  //scroll up
+                  // console.log('Up');
+                  rotationY -= 0.01 * e.originalEvent.wheelDeltaY;
+                  rotationY = Math.max(3.0,rotationY);
+              }
+              if(e.originalEvent.wheelDeltaX < 0) {
+                  //scroll down
+                  // console.log('LEFT');
+                  rotationX += 0.0001*e.originalEvent.wheelDeltaX;
+                  rotationDirection = -1;
+              }else {
+                  //scroll up
+                  // console.log('RIGHT');
+                  rotationX += 0.0001*e.originalEvent.wheelDeltaX;
+                  rotationDirection = 1;
+              }
+
+            // console.log(e.originalEvent.wheelDelta);
+              //prevent page fom scrolling
+              return false;
+          });
+
+
+         (function ($) {
+           // custom css expression for a case-insensitive contains()
+           jQuery.expr[':'].Contains = function(a,i,m){
+               return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
+           };
+
+
+           function listFilter(header, list) { // header is any element, list is an unordered list
+             // create and add the filter form to the header
+             var form = $("<form>").attr({"class":"filterform","action":"#"}),
+                 input = $("<input>").attr({"class":"filterinput","type":"text","id":"searchinput"});
+             $(form).append(input).appendTo(header);
+
+            $('#searchinput').css('background-color','transparent');
+
+             $(input)
+               .change( function () {
+                 filter = $(this).val();
+                 if(filter) {
+                   // this finds all links in a list that contain the input,
+                   // and hide the ones not containing the input while showing the ones that do
+                   $(list).find("a:not(:Contains(" + filter + "))").parent().slideUp();
+                   $(list).find("a:Contains(" + filter + ")").parent().slideDown();
+                 } else {
+                   $(list).find("li").slideDown();
+                 }
+                 return false;
+               })
+             .keyup( function () {
+                 // fire the above change event after every letter
+                 $(this).change();
+             });
+           }
+
+
+           //ondomready
+           $(function () {
+             for(var i = 0; i < studentNames.length; ++i){
+               $('#list').append(
+                  '<li><a href="#" id="listnames' + i + '" data-index="' + i + '" class="listnames">' + studentNames[i] + '</a></li>');
+             };
+             listFilter($("#header"), $("#list"));
+            $('#search input').val('search');
+
+            $('#search input').focusin(function() {
+               $('#search input').val('');
+               $('#list').css('display','block');
+               $('#list').stop().animate({ opacity: 1 });
+               $('.universenames').stop().animate({ opacity: 0 });
+            });
+            $('#search input').focusout(function() {
+               filter = '';
+               $('#search input').val('search');
+
+               $('.universenames').stop().animate({ opacity: 1 });
+               $('#list').stop().animate({ opacity: 0 },{
+                  duration: 100,
+                  complete: function(){
+                  $('#list').css('display','none');
+               } });
+            });
+           });
+         }(jQuery));
+
+         $('#search').offset({ left: width/2 - $('#search').outerWidth()/2, top: 20});
+
+         $(window).resize(function(){location.reload();});
+
+         }
+
+      </script>
+   </head>
+   
+   <body id="body" style="background-color: #0000aa">
+      <canvas id="canvas" width="768" height="512" style="background-color: #fff"></canvas>
+      <!-- <div id="rects"> </div> -->
+      <div id="names"> </div>
+
+
+<div id="search">
+  <div id="header"></div>
+  <ul id="list">
+   </ul>
+</div>
+
+   </body>
 </html>

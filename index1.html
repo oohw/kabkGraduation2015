@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>office of hard work - graduation 2015 sketch 0.2a</title>
+		<meta charset="utf-8">
+		<meta name="viewport" logo="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #00a;
+				margin: 0px;
+				overflow: hidden;
+			}
+			div a {
+				color: #fff;
+			}
+			.name {
+				font-family: Helvetica;
+			}
+			.name {
+				text-decoration: none;
+			}
+			.name:hover{
+				text-decoration: underline;
+			}
+			#logo {
+				 background:  url('img/gradshow.png') no-repeat;
+				 background-size: 100%;
+			}
+			#info a {
+				background-color: #000;
+			}
+		</style>
+	</head>
+	<body>
+	<script src="js/jquery-2.1.3.js"></script>
+		<script src="js/three.js"></script>
+
+		<script src="js/stats.min.js"></script>
+
+		<script>
+
+			var container, stats;
+			var camera, scene, raycaster, renderer, parentTransform, sphereInter;
+			var origins = [];
+
+			var smeshes;
+
+			var mouse = new THREE.Vector2();
+			var radius = 100, theta = 0;
+
+			var currentIntersected;
+
+			var standardRotationSpeed = 0.5;
+			var rotationSpeed = standardRotationSpeed;
+
+			var names;
+
+			init();
+			animate();
+
+			function init() {
+				var width = $('body').outerWidth();
+				var height = $('body').outerHeight();
+
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				names = document.createElement( 'div' );
+				document.body.appendChild( names );
+
+				var info = document.createElement( 'div' );
+				info.style.position = 'absolute';
+				info.style.top = '10px';
+				info.style.width = '100%';
+				info.style.textAlign = 'center';
+				info.setAttribute("id", "info");
+				info.innerHTML = '<a href="http://oohw.net" target="_blank">office of hard work - kabk graduation 2015 website 0.2a';
+				container.appendChild( info );
+
+				var logo = document.createElement( 'div' );
+				logo.style.position = 'absolute';
+
+				var padding = width*0.01;
+				logo.style.top = padding + 'px';
+				logo.style.right = padding + 'px';
+				var scaler = width*0.24;
+				// var scaler = 0.0261437908496732;
+				var logowidth = scaler;
+				var logoheight = 318/459*logowidth;
+				logo.style.width = logowidth +'px'; // 459 318
+				logo.style.height = logoheight + 'px';
+				logo.setAttribute("id", "logo");
+				document.body.appendChild( logo );
+
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+
+				scene = new THREE.Scene();
+
+				var geometry = new THREE.SphereGeometry( 1 );
+				var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+
+				sphereInter = new THREE.Mesh( geometry, material );
+				sphereInter.visible = false;
+				scene.add( sphereInter );
+
+				var geometry = new THREE.Geometry();
+
+				var point = new THREE.Vector3();
+				var direction = new THREE.Vector3();
+
+				for ( var i = 0; i < 50; i ++ ) {
+
+					direction.x += Math.random() - 0.5;
+					direction.y += Math.random() - 0.5;
+					direction.z += Math.random() - 0.5;
+					direction.normalize().multiplyScalar( 10 );
+
+					point.add( direction );
+
+					geometry.vertices.push( point.clone() );
+
+				}
+
+				parentTransform = new THREE.Object3D();
+				smeshes = new THREE.Object3D();
+				// parentTransform.position.x = Math.random() * 40 - 20;
+				// parentTransform.position.y = Math.random() * 40 - 20;
+				// parentTransform.position.z = Math.random() * 40 - 20;
+
+				// parentTransform.rotation.x = Math.random() * 2 * Math.PI;
+				// parentTransform.rotation.y = Math.random() * 2 * Math.PI;
+				// parentTransform.rotation.z = Math.random() * 2 * Math.PI;
+
+				// parentTransform.scale.x = Math.random() + 0.5;
+				// parentTransform.scale.y = Math.random() + 0.5;
+				// parentTransform.scale.z = Math.random() + 0.5;
+
+
+				// for ( var i = 0; i < 50; i ++ ) {
+				// 	var origin = new THREE.Vector3();
+				// 	origin.x =  Math.random() * 400 - 200;
+				// 	origin.y =  Math.random() * 400 - 200;
+				// 	origin.z =  Math.random() * 400 - 200;
+
+				// 	origins.push( origin );
+				// }
+
+				var mrRandom = ["Talisha Aleman","Derek Galvez","Chin Lightford","Jacinta Scrivens","Latashia Enlow","Amy Popa","Kiley Belville","Jessenia Coaxum","Loren Pierce","Deloras Kindle","Sirena Armwood","Zane Bakke","Clay Polich","Dick Seekins","Eunice Yoshimura","Dominque Parada","Simone Nason","Karin Hassler","Rueben Iglesias","Cassondra Trail","Ulrike Vangundy","Ela Montville","Gia Loan","Toni Muldoon","Shani Sosnowski","Erik Hockenberry","Penelope Vue","Alba Sorkin","Natalya Shimer","Francie Ollis","Matilda Pospisil","Derick Getman","Enedina Mcnair","Sean Boll","Coy Eagles","Rosalie Conigliaro","Mattie Stockdale","Alden Stenzel","Ahmed Kaster","Corazon Washam","Jacquie Barak","Harmony Timoteo","Shiloh Hudock","Leona Burgener","Elvie Brinkley","Josue Voegele","Cesar Romine","Leila Sprankle","Richard Herdt","Melissia Harger"];
+
+				for ( var i = 0; i < 50; i ++ ) {
+
+					var type = Math.random() > 0.5 ? THREE.LineStrip : THREE.LinePieces;
+					var object = new THREE.Line( geometry, new THREE.LineBasicMaterial( { color: 0xffffff } ), type );
+
+					object.position.x = Math.random() * 400 - 200;
+					object.position.y = Math.random() * 400 - 200;
+					object.position.z = Math.random() * 400 - 200;
+
+					object.rotation.x = Math.random() * 2 * Math.PI;
+					object.rotation.y = Math.random() * 2 * Math.PI;
+					object.rotation.z = Math.random() * 2 * Math.PI;
+
+					object.scale.x = Math.random() + 0.5;
+					object.scale.y = Math.random() + 0.5;
+					object.scale.z = Math.random() + 0.5;
+
+					parentTransform.add( object );
+
+
+				// for ( var i = 0; i < 50; i ++ ) {
+					var sgem = new THREE.SphereGeometry( 2 );
+					var smat = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
+					var smesh = new THREE.Mesh( sgem, smat );
+					smesh.position.copy( object.position );
+
+					smeshes.add(smesh);
+					// scene.add(smesh);
+
+					origins.push( object.position );
+
+
+					var name = document.createElement( 'div' );
+					name.style.position = 'absolute';
+					name.style.top = '10px';
+					name.style.width = '200px';
+					name.style.textAlign = 'center';
+
+					name.innerHTML = '<a class="name" href="#">' + mrRandom[i] + '</a>';
+					names.appendChild( name );
+
+					// if(i < 10){
+					// 	for(var v = 0; v < object.geometry.vertices.length; v++){
+					// 		var egem = new THREE.SphereGeometry( 2 );
+					// 		var emat = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+					// 		var emesh = new THREE.Mesh( egem, emat );
+
+					// 		// var erot = new THREE.Vector3();
+					// 		// erot.multiply(object.geometry.vertices[v], object.rotation);
+
+					// 		var escale = new THREE.Vector3();
+					// 		escale.multiplyVectors( object.scale, object.geometry.vertices[v] );
+					// 		escale.applyAxisAngle( object.rotation, 1);
+
+					// 		var epos = new THREE.Vector3();
+					// 		epos.addVectors( object.position, escale );
+					// 		// epos.addVectors( epos, erotpos );
+					// 		// epos.addVectors( object.position, object.geometry.vertices[v] );
+					// 		// epos.applyAxisAngle( object.position, 0.1 );//, Math.random() );
+					// 		// epos = object.geometry.vertices[0].clone();
+					// 		console.log();
+
+					// 		emesh.position.copy( epos );
+					// 		scene.add(emesh);
+					// 	}
+					// }
+
+
+				}
+
+				// scene.add(smeshes);
+
+				scene.add( parentTransform );
+
+				raycaster = new THREE.Raycaster();
+				raycaster.linePrecision = 3;
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setClearColor( 0x0000aa );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild(renderer.domElement);
+
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				container.appendChild( stats.domElement );
+
+				document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+
+				$('.name').mouseover(function(event) {
+					/* Act on the event */
+					rotationSpeed = 0.05;
+					console.log('yeah');
+				});
+				$('.name').mouseout(function(event) {
+					/* Act on the event */
+					rotationSpeed = standardRotationSpeed;
+					console.log('yeah');
+				});
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function onDocumentMouseMove( event ) {
+
+				event.preventDefault();
+
+				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+			}
+
+			//
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				render();
+				stats.update();
+
+			}
+
+			function render() {
+
+				theta += rotationSpeed;
+				var blue = Math.floor((Math.sin(theta*0.1)*35)+200);
+				renderer.setClearColor( 'rgb(0,80,' + blue + ')' );
+
+				camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+				camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+
+				// camera.position.x = mouse.x*100;
+				// camera.position.y = mouse.y*100;
+				camera.lookAt( scene.position );
+
+				camera.updateMatrixWorld();
+
+				// find intersections
+
+				raycaster.setFromCamera( mouse, camera );
+
+				var intersects = raycaster.intersectObjects( parentTransform.children, true);
+
+				if ( intersects.length > 0 ) {
+
+					if ( currentIntersected !== undefined ) {
+
+						currentIntersected.material.linewidth = 1;
+
+					}
+
+					currentIntersected = intersects[ 0 ].object;
+					currentIntersected.material.linewidth = 5;
+
+					// sphereInter.visible = true;
+					sphereInter.position.copy( intersects[ 0 ].point );
+
+				} else {
+
+					if ( currentIntersected !== undefined ) {
+
+						currentIntersected.material.linewidth = 1;
+
+					}
+
+					currentIntersected = undefined;
+
+					sphereInter.visible = false;
+
+				}
+
+				if(theta > rotationSpeed){
+					var mouseovers = raycaster.intersectObjects( smeshes.children );
+
+					if( mouseovers.length > 0 ){
+						for ( var i = 0; i < mouseovers.length; i++){
+							mouseovers[ i ].object.material.color.set( 'rgb(255,' + Math.floor((theta*255)%255) + ',255)' );
+						}
+					}
+				}	
+
+				for ( var i = 0; i < smeshes.children.length; i++){
+					var proj = toScreenPosition(smeshes.children[i], camera);
+					var divElem = names.children[i];
+
+					divElem.style.left = proj.x-100 + 'px';
+					divElem.style.top = proj.y-10 + 'px';
+
+				}
+
+				renderer.render( scene, camera );
+				// rotationSpeed = standardRotationSpeed;\
+			}
+
+			function toScreenPosition(obj, camera)
+			{
+			    var vector = new THREE.Vector3();
+
+			    var widthHalf = 0.5*renderer.context.canvas.width;
+			    var heightHalf = 0.5*renderer.context.canvas.height;
+
+			    obj.updateMatrixWorld();
+			    vector.setFromMatrixPosition(obj.matrixWorld);
+			    vector.project(camera);
+
+			    vector.x = ( vector.x * widthHalf ) + widthHalf;
+			    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+
+			    return { 
+			        x: vector.x,
+			        y: vector.y
+			    };
+
+			};
+
+		</script>
+
+	</body>
+</html>
